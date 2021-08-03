@@ -25,7 +25,12 @@ export default {
   css: ["@/assets/css/common.css", "@/assets/css/transition.css"],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
-  plugins: ["~/plugins/vee-validate"],
+  plugins: [
+    "@/plugins/vee-validate",
+    // "@/plugins/vue-cookies",
+    // "@/plugins/member",
+    "@/plugins/axios"
+  ],
 
   // Auto import components: https://go.nuxtjs.dev/config-components
   components: true,

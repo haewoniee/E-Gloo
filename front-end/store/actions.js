@@ -1,19 +1,24 @@
-import axios from "axios";
+// import axios from "axios";
 
 export const login = async ({ commit }, { userId, password }) => {
   let form = new FormData();
   form.append("userId", userId);
   form.append("password", password);
 
-  await axios.post("http://localhost:8080/auth/login", form).then(res => {
-    if (res.status == 200) {
-      commit("LOGIN", userId);
-    } else {
-      throw new Error(
-        "로그인에 실패했습니다. 아이디와 비밀번호를 확인 해 주세요."
-      );
-    }
-  });
+  await $axios.login(form);
+
+  localStorage.setItem("user", JSON.stringify(response.data));
+
+  // const { data } = await axios.post("auth/login", form);
+  // if (data.accessToken) {
+  //   localStorage.setItem("user", JSON.stringify(response.data));
+  // } else {
+  //   throw new Error(
+  //     "로그인에 실패했습니다. 아이디와 비밀번호를 확인 해 주세요."
+  //   );
+  // }
+
+  commit("LOGIN", userId);
 };
 
 export const register = async (
@@ -30,11 +35,14 @@ export const register = async (
   form.append("email", email);
   form.append("address", address);
 
-  await axios.post("http://localhost:8080/auth/signup", form).then(res => {
-    if (res.status == 200) {
-      commit("LOGIN", userId);
-    } else {
-      throw new Error("회원가입에 실패했습니다.");
-    }
-  });
+  // const { data } = await axios.post("auth/register", form);
+  // if (data.accessToken) {
+  //   localStorage.setItem("user", JSON.stringify(response.data));
+  // } else {
+  //   throw new Error(
+  //     "로그인에 실패했습니다. 아이디와 비밀번호를 확인 해 주세요."
+  //   );
+  // }
+
+  commit("LOGIN", userId);
 };
