@@ -1,6 +1,16 @@
 <template>
   <div class="wrap">
-    <div class="tabs">
+    <v-tabs v-model="tab" background-color="transparent" grow>
+      <v-tab class="primary--text" v-for="item in list" :key="item.label">{{
+        item.label
+      }}</v-tab>
+    </v-tabs>
+    <v-tabs-items v-model="tab">
+      <v-tab-item v-for="item in list" :key="item.content">
+        {{ item.content }}
+      </v-tab-item>
+    </v-tabs-items>
+    <!-- <div class="tabs">
       <TabItem
         v-for="item in list"
         v-bind="item"
@@ -23,7 +33,7 @@
         />
         <span v-if="current.content == 'item2'">hello</span>
       </section>
-    </div>
+    </div> -->
   </div>
 </template>
 <script>
@@ -36,18 +46,16 @@ export default {
   components: { TabItem, Recipe, Grid },
   data() {
     return {
+      tab: null,
       list: [
-        { id: 1, label: "요리 가능 레시피", content: "recipe" },
-        { id: 2, label: "추천 레시피", content: "item2" }
+        { id: 1, label: "요리 가능 레시피", content: "a" },
+        { id: 2, label: "추천 레시피", content: "b" }
       ],
       currentId: 1,
       recipe: Recipe
     };
   },
   computed: {
-    current() {
-      return this.list.find(el => el.id === this.currentId) || {};
-    },
     ...mapState(["recipes"])
   }
 };

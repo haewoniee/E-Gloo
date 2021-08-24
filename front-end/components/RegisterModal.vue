@@ -1,92 +1,97 @@
 <template>
   <div class="modal-wrapper">
-    <div class="modal-container">
-      <div class="modal-body">
-        <div class="modal-header">
-          <multiply-icon @click="$emit('close')" />
-          <span class="title">회원가입</span>
-        </div>
-        <ValidationObserver ref="observer">
-          <form method="post" @submit.prevent="register">
-            <general-input
-              rules="required"
-              name="닉네임"
+    <div class="modal-header">
+      <multiply-icon @click="$emit('close')" />
+      <span class="title">회원가입</span>
+    </div>
+    <div class="modal-body">
+      <ValidationObserver ref="observer">
+        <v-form method="post" @submit.prevent="register">
+          <ValidationProvider name="닉네임" rules="required|max:10">
+            <v-text-field
+              slot-scope="{ errors, valid }"
+              label="닉네임"
               placeholder="닉네임을 입력해주세요."
+              :error-messages="errors"
+              :success="valid"
               v-model="registerData.username"
-            />
-            <general-input
-              rules="required|min:8,12|max:12|complex"
-              name="비밀번호"
-              placeholder="비밀번호 입력"
+            ></v-text-field>
+          </ValidationProvider>
+          <ValidationProvider
+            name="비밀번호"
+            rules="required|min:8,12|max:12|complex"
+          >
+            <v-text-field
+              slot-scope="{ errors, valid }"
+              label="비밀번호"
+              placeholder="비밀번호"
+              :error-messages="errors"
+              :success="valid"
+              v-model="registerData.passwrod"
               type="password"
-              v-model="registerData.password"
-            />
-            <general-input
-              rules="required|confirmed:비밀번호"
-              name="비밀번호 확인"
+            ></v-text-field>
+          </ValidationProvider>
+          <ValidationProvider
+            name="비밀번호 확인"
+            rules="required|min:8,12|max:12|complex"
+          >
+            <v-text-field
+              slot-scope="{ errors, valid }"
+              label="비밀번호 확인"
               placeholder="비밀번호 확인"
-              type="password"
+              :error-messages="errors"
+              :success="valid"
               v-model="registerData.passwordCheck"
-            />
-            <switch-tab-input
-              :items="registerData.genders"
-              :valueIn="registerData.gender"
-              category="gender"
-              v-model="registerData.gender"
-              label="성별"
-              rules=""
-            />
-            <general-input
-              rules="email"
-              name="이메일"
-              v-model="registerData.email"
+              type="password"
+            ></v-text-field>
+          </ValidationProvider>
+          <ValidationProvider
+            name="비밀번호 확인"
+            rules="required|min:8,12|max:12|complex"
+          >
+            <v-text-field
+              slot-scope="{ errors, valid }"
+              label="비밀번호 확인"
+              placeholder="비밀번호 확인"
+              :error-messages="errors"
+              :success="valid"
+              v-model="registerData.passwordCheck"
+              type="password"
+            ></v-text-field>
+          </ValidationProvider>
+          <v-radio-group row v-model="registerData.gender" grow>
+            <v-radio label="여성"></v-radio>
+            <v-radio label="남성"></v-radio>
+          </v-radio-group>
+          <ValidationProvider name="이메일" rules="email">
+            <v-text-field
+              slot-scope="{ errors, valid }"
+              label="이메일"
               placeholder="ID@example.com"
-            />
-            <general-input
-              name="주소입력"
-              v-model="registerData.address1"
-              @focus="searchAddress"
-              placeholder="우편번호 찾기"
-              :initDisabled="address_disabled"
-            >
-              <MultiplyIcon
-                style="width:1rem;height:1rem"
-                v-show="address_disabled"
-                @click="address_disabled = !address_disabled"
-              />
-            </general-input>
-            <div v-show="address_disabled" ref="embed"></div>
-            <general-input
-              name="상세주소"
-              v-model="registerData.address2"
-              v-show="registerData.address1 != ''"
-            />
-            <div class="control">
-              <button type="submit" class="button is-dark is-fullwidth">
-                입력완료
-              </button>
-            </div>
-          </form>
-        </ValidationObserver>
-      </div>
+              :error-messages="errors"
+              :success="valid"
+              v-model="registerData.email"
+            ></v-text-field>
+          </ValidationProvider>
+          <v-btn type="submit" color="primary" dark rounded>
+            입력완료
+          </v-btn>
+        </v-form>
+      </ValidationObserver>
     </div>
   </div>
 </template>
 <script>
 import Notification from "~/components/Notification";
-import { ValidationObserver } from "vee-validate";
-import GeneralInput from "~/components/GeneralInput";
-import SwitchTabInput from "~/components/SwitchTabInput";
+import { ValidationObserver, ValidationProvider } from "vee-validate";
 import MultiplyIcon from "~/assets/images/multiply.svg?inline";
-import daumMaps from "@/services/daumMaps";
 
 export default {
   components: {
     Notification,
+    MultiplyIcon,
     ValidationObserver,
-    GeneralInput,
-    SwitchTabInput,
-    MultiplyIcon
+    ValidationProvider
   },
   data() {
     return {
@@ -97,20 +102,12 @@ export default {
         passwordCheck: "",
         gender: "",
         email: "",
-        zonecode: "",
-        address1: "",
-        address2: "",
         genders: [
           { label: "남성", id: "MALE" },
           { label: "여성", id: "FEMALE" }
         ]
-      },
-      error: null,
-      address_disabled: false
+      }
     };
-  },
-  head() {
-    return daumMaps;
   },
   methods: {
     async register() {
@@ -138,25 +135,6 @@ export default {
             // });
           });
       }
-    },
-    searchAddress() {
-      if (!this.postCode) {
-        this.postCode = new window.daum.Postcode({
-          width: "100%",
-          oncomplete: data => {
-            //roadAddress : 도로명주소, zonecode : 우편번호, buildingName : 건물명
-            const { roadAddress, zonecode, buildingName } = data;
-
-            this.registerData.zonecode = zonecode;
-            this.registerData.address1 =
-              roadAddress +
-              (buildingName != "" ? " (" + buildingName + ")" : "");
-            this.address_disabled = false;
-          }
-        });
-      }
-      this.postCode.embed(this.$refs.embed);
-      this.address_disabled = true;
     }
   }
 };
@@ -170,6 +148,7 @@ export default {
   width: -webkit-fill-available;
   height: -webkit-fill-available;
   overflow: hidden;
+  background-color: #fff;
 }
 
 .modal-container {
@@ -177,7 +156,6 @@ export default {
   height: 100%;
   width: 100%;
   padding: 0 2rem;
-  background-color: #fff;
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.3s ease;
@@ -195,8 +173,5 @@ export default {
 }
 .modal-body {
   margin: 20px 0;
-}
-.title {
-  margin-left: 1rem;
 }
 </style>

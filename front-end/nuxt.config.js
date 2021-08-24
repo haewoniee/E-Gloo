@@ -3,7 +3,7 @@ export default {
   head: {
     title: "front-end",
     htmlAttrs: {
-      lang: "en"
+      lang: "ko"
     },
     meta: [
       { charset: "utf-8" },
@@ -11,14 +11,7 @@ export default {
       { hid: "description", name: "description", content: "" },
       { name: "format-detection", content: "telephone=no" }
     ],
-    link: [
-      { rel: "icon", type: "image/x-icon", href: "/favicon.ico" },
-      {
-        rel: "stylesheet",
-        href:
-          "https://cdnjs.cloudflare.com/ajax/libs/bulma/0.7.1/css/bulma.min.css"
-      }
-    ]
+    link: []
   },
 
   // Global CSS: https://go.nuxtjs.dev/config-css
@@ -35,7 +28,10 @@ export default {
   components: true,
 
   // Modules for dev and build (recommended): https://go.nuxtjs.dev/config-modules
-  buildModules: [],
+  buildModules: [
+    // Simple usage
+    "@nuxtjs/vuetify"
+  ],
 
   // Modules: https://go.nuxtjs.dev/config-modules
   modules: [
@@ -85,6 +81,21 @@ export default {
           user: { url: "/auth/user", method: "post", propertyName: "user" },
           logout: false
         }
+      }
+    }
+  },
+  vuetify: {
+    customVariables: ["~/assets/variables.scss"],
+    theme: {
+      dark: false,
+      themes: {
+        primary: "#F98988",
+        accent: "#F98988",
+        secondary: "#F98988",
+        info: "#F98988",
+        warning: "#F98988",
+        error: "#F98988",
+        success: "#F98988"
       }
     }
   }
